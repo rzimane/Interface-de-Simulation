@@ -441,7 +441,7 @@ const S = {
   /* cSections sans 'logs' */
   cSections:{ident:true,cap:true,ident2:true,arrets:true,horizon:true,pos:true,verif:true},
   cName:"Nouveau scénario",
-  cDesc:"Simulation depuis interface", cUser:"ADMIN", cLaunchDate:"",
+  cUser:"ADMIN", cLaunchDate:"",
   cDivisions:[DIVISION_CODES[0]],
   cArrets:[{deb:"",fin:""}],
   cHorizon:52, cHorizonRegroup:4,
@@ -576,9 +576,8 @@ function viewCreate(){
   h+='<button class="link" data-act="back">'+icon("ArrowLeft",15)+'Retour à la liste</button>';
 
   /* 1. Identification */
-  let ident='<div class="grid3form">';
+  let ident='<div class="grid2form">';
   ident+='<label class="fld"><span class="lbl">Nom du scénario</span><input type="text" id="c-name" value="'+esc(S.cName)+'" style="width:100%"/></label>';
-  ident+='<label class="fld"><span class="lbl">Description</span><input type="text" id="c-desc" value="'+esc(S.cDesc)+'" style="width:100%"/></label>';
   ident+='<label class="fld"><span class="lbl">Utilisateur</span><input type="text" id="c-user" value="'+esc(S.cUser)+'" style="width:100%"/></label>';
   ident+='<label class="fld"><span class="lbl">Horizon de la simulation (semaines)</span><input type="number" id="c-horizon" value="'+S.cHorizon+'" min="1" class="mono" style="width:100%"/></label>';
   ident+='<label class="fld"><span class="lbl">Date de lancement</span><input type="date" id="c-launch-date" value="'+esc(S.cLaunchDate)+'" style="width:100%" aria-label="Date de lancement"/></label>';
@@ -686,7 +685,6 @@ function syncCreateForm(){
   if(S.view!=="create") return;
   const gv = id => { const el=document.getElementById(id); return el?el.value:null; };
   const v = gv("c-name"); if(v!==null) S.cName=v;
-  const d = gv("c-desc"); if(d!==null) S.cDesc=d;
   const u = gv("c-user"); if(u!==null) S.cUser=u;
   const ld = gv("c-launch-date"); if(ld!==null) S.cLaunchDate=ld;
   const hv = gv("c-horizon"); if(hv!==null) S.cHorizon=+hv||1;
@@ -824,7 +822,7 @@ async function launch(){
       ? "Plutot"
       : (S.cPos === "auplustot" ? "Plutot" : "Plutard"),
 
-    SIM_DESC: S.cName || S.cDesc || "Simulation depuis interface",
+    SIM_DESC: (S.cName || "").trim() || "Nouveau scénario",
     SIM_USER: S.cUser || "ADMIN",
     SIM_DIVISIONS: S.cDivisions.length === DIVISION_CODES.length
       ? "ALL"
@@ -850,7 +848,6 @@ async function launch(){
 
   const scenarioConfig = {
     name: S.cName,
-    description: S.cDesc,
     divisions: S.cDivisions.slice(),
     capacityMode: S.cCap,
     positioning: S.cPos,
