@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>(function(){try{var t=localStorage.getItem("capasim-theme");if(t!=="light"&&t!=="dark")t=(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+<title>CapaSim — Simulation de capacité (MES · Pharma)</title>
+<style>
+/* ===== Thème Sothema : clair (défaut) / sombre ===== */
+:root{
+  color-scheme:light;
+  --brand-navy:#243C7C; --brand-sky:#0E9AD7; --brand-red:#E4202B;
+  --bg:#F3F6FB; --panel:#FFFFFF; --panel2:#F7F9FD; --line:#DDE4F0; --line2:#C5D0E4; --line3:#9FB0D0;
+  --text:#1B2A4E; --text2:#34466F; --muted:#62708F; --muted2:#4F5F82; --title:#12214A;
+  --input:#FFFFFF; --chip:#E9EEF8; --hover2:#D8E0F0; --row-hover:rgba(36,60,124,.05); --disabled:#9AA7C2;
+  --card:#FFFFFF; --inset:#F7F9FD; --header-bg:rgba(255,255,255,.92); --foot-bg:rgba(255,255,255,.92);
+  --overlay:rgba(18,33,74,.35); --shadow:rgba(18,33,74,.16); --scroll:#C5D0E4; --cal-filter:none;
+  --amber:#243C7C; --amberT:#243C7C; --amberH:#1B2F66; --amber-rgb:36,60,124; --on-primary:#FFFFFF;
+  --emerald:#059669; --emeraldT:#047857; --emerald-rgb:5,150,105;
+  --red:#E4202B; --redT:#C8121D; --red-rgb:228,32,43;
+  --sky:#0E9AD7; --skyT:#0A74A3; --sky-rgb:14,154,215;
+  --violet:#4F63B8; --violetT:#3A4D9C; --violet-rgb:79,99,184;
+  --c1:#243C7C; --c2:#0E9AD7; --c3:#E4202B; --c4:#059669;
+  --mono:ui-monospace,"Cascadia Code","SF Mono",Consolas,monospace;
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0A1230; --panel:#101A3F; --panel2:#14204A; --line:#1F2D5C; --line2:#2F4079; --line3:#4A5E9A;
+  --text:#E5EBFA; --text2:#C3CEEA; --muted:#7E8DB8; --muted2:#9DAAD0; --title:#F4F7FF;
+  --input:#070E26; --chip:#1A2750; --hover2:#2A3A72; --row-hover:rgba(42,58,114,.32); --disabled:#4A5A8C;
+  --card:rgba(16,26,63,.6); --inset:rgba(7,14,38,.5); --header-bg:rgba(10,18,48,.92); --foot-bg:rgba(16,26,63,.9);
+  --overlay:rgba(5,9,26,.65); --shadow:rgba(0,0,0,.5); --scroll:#2F4079; --cal-filter:invert(.85);
+  --amber:#3B72E0; --amberT:#8FB1FF; --amberH:#5A8CF0; --amber-rgb:59,114,224; --on-primary:#FFFFFF;
+  --emerald:#10B981; --emeraldT:#34D399; --emerald-rgb:16,185,129;
+  --red:#F0454F; --redT:#FF8087; --red-rgb:240,69,79;
+  --sky:#2BB3EE; --skyT:#7CD0F7; --sky-rgb:43,179,238;
+  --violet:#8FA0EB; --violetT:#B5C2F5; --violet-rgb:143,160,235;
+  --c1:#6C9BFF; --c2:#2BB3EE; --c3:#FF6670; --c4:#34D399;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:1.45}
+button{font-family:inherit;cursor:pointer}
+.mono{font-family:var(--mono)}
+::-webkit-scrollbar{height:9px;width:9px}
+::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:5px}
+a{color:inherit}
+
+header{position:sticky;top:0;z-index:30;border-bottom:1px solid var(--line);background:var(--header-bg);backdrop-filter:blur(6px)}
+.wrap{max-width:1160px;margin:0 auto;padding:0 16px}
+.hd{display:flex;align-items:center;justify-content:space-between;padding:12px 0}
+.logo{display:flex;align-items:center;gap:12px}
+.logobox{width:36px;height:36px;border-radius:9px;border:1px solid rgba(var(--amber-rgb),.4);background:rgba(var(--amber-rgb),.1);display:flex;align-items:center;justify-content:center;color:var(--amberT)}
+.title{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--title)}
+.tag{border-radius:5px;background:var(--chip);padding:2px 6px;font-size:10px;font-weight:400;text-transform:uppercase;letter-spacing:.08em;color:var(--muted2)}
+.sub{font-size:12px;color:var(--muted)}
+.hd-right{display:flex;align-items:center;gap:16px;font-size:12px;color:var(--muted)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--emerald);display:inline-block;animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.35}}
+main{max-width:1160px;margin:0 auto;padding:24px 16px}
+.stack{display:flex;flex-direction:column;gap:16px}
+.stack-sm{display:flex;flex-direction:column;gap:8px}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.between{justify-content:space-between}
+.spacer{flex:1}
+
+.btn{display:inline-flex;align-items:center;gap:6px;border-radius:9px;padding:8px 12px;font-size:14px;border:1px solid transparent;background:none;color:var(--text2)}
+.btn svg{width:15px;height:15px}
+.btn-amber{background:var(--amber);color:var(--on-primary);font-weight:600;border:none}
+.btn-amber:hover{background:var(--amberH)}
+.btn-ghost{border:1px solid var(--line2);color:var(--text2)}
+.btn-ghost:hover{background:var(--chip)}
+.btn-sky{border:1px solid rgba(var(--sky-rgb),.4);background:rgba(var(--sky-rgb),.1);color:var(--skyT)}
+.btn-sky:hover{background:rgba(var(--sky-rgb),.2)}
+.link{display:inline-flex;align-items:center;gap:6px;color:var(--muted2);font-size:14px;background:none;border:none;padding:0}
+.link:hover{color:var(--text)}
+.btn:disabled{opacity:.6;cursor:default}
+
+.seg{display:inline-flex;border:1px solid var(--line2);background:var(--panel);border-radius:9px;padding:2px}
+.seg.dark{background:var(--input)}
+.seg button{display:flex;align-items:center;gap:6px;border-radius:7px;padding:6px 12px;font-size:14px;border:none;background:none;color:var(--muted2)}
+.seg.big button{padding:8px 16px}
+.seg button.on{background:var(--amber);color:var(--on-primary);font-weight:600}
+.seg svg{width:13px;height:13px}
+
+select,input[type=text],input[type=number],input[type=date],textarea{font-family:inherit;font-size:14px;color:var(--text);background:var(--input);border:1px solid var(--line2);border-radius:9px;padding:8px 10px;outline:none}
+select:focus,input:focus,textarea:focus{border-color:var(--amber)}
+
+input[type=date]{cursor:pointer;position:relative;padding-right:34px;background-image:none}
+input[type=date]:hover{border-color:var(--line3)}
+input[type=date]::-webkit-calendar-picker-indicator{cursor:pointer;opacity:.85;filter:var(--cal-filter);padding:2px;margin-left:4px;border-radius:5px;transition:opacity .15s,background .15s}
+input[type=date]::-webkit-calendar-picker-indicator:hover{opacity:1;background:rgba(var(--amber-rgb),.15)}
+input[type=date]::-webkit-datetime-edit{color:var(--text)}
+input[type=date]:invalid::-webkit-datetime-edit,input[type=date][value=""]::-webkit-datetime-edit{color:var(--muted2)}
+
+input:disabled,select:disabled{opacity:.4}
+.divsel{display:flex;align-items:center;gap:8px;border:1px solid rgba(var(--violet-rgb),.4);background:rgba(var(--violet-rgb),.1);border-radius:9px;padding:6px 10px}
+.divsel select{background:transparent;border:none;color:var(--violetT);font-weight:500;padding:2px}
+label.fld{display:block}
+label.fld .lbl,.lbl{display:block;margin-bottom:6px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted2)}
+.violet-inp{border-color:rgba(var(--violet-rgb),.4);color:var(--violetT)}
+
+.divchips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.divchip{border-radius:8px;border:1px solid var(--line2);background:var(--input);padding:7px 12px;font-size:13px;font-weight:600;color:var(--text2);letter-spacing:.04em;transition:background .15s,border-color .15s,color .15s;font-family:var(--mono)}
+.divchip:hover{border-color:var(--amber)}
+.divchip.on{border-color:rgba(var(--amber-rgb),.6);background:rgba(var(--amber-rgb),.15);color:var(--amberT)}
+.divchips-tools{display:flex;gap:6px;margin-top:2px;align-items:center}
+.linkbtn-sm{background:none;border:none;color:var(--muted2);font-size:12px;padding:4px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:4px}
+.linkbtn-sm:hover{background:var(--chip);color:var(--text)}
+
+.arret-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:var(--inset)}
+.arret-row .datewrap{display:flex;flex-direction:column;gap:4px;flex:1;min-width:140px}
+.arret-row .datewrap .dl{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.arret-row input[type=date]{width:100%}
+.arret-row .arrow{color:var(--amberT);flex:none;display:flex;align-items:center;padding:0 2px;align-self:flex-end;margin-bottom:9px}
+
+.card{border:1px solid var(--line);background:var(--card);border-radius:12px;overflow:hidden}
+.card:has(.menu){overflow:visible}
+.card-h{display:flex;width:100%;align-items:center;justify-content:space-between;padding:12px 16px;background:none;border:none;color:inherit}
+.card-h:hover{background:var(--row-hover)}
+.card-b{border-top:1px solid var(--line);padding:16px}
+.head{display:flex;align-items:center;gap:10px;font-weight:600;color:var(--title)}
+.head svg{width:16px;height:16px;color:var(--amberT)}
+.hint{margin:0 0 12px;display:flex;gap:6px;font-size:12px;color:var(--muted)}
+.hint svg{width:12px;height:12px;flex:none;margin-top:2px}
+.chev{width:16px;height:16px;color:var(--muted)}
+
+.badge{display:inline-flex;align-items:center;gap:6px;border-radius:5px;border:1px solid var(--line2);background:var(--chip);color:var(--text2);padding:2px 8px;font-size:12px;font-weight:500}
+.badge svg{width:12px;height:12px}
+.b-amber{background:rgba(var(--amber-rgb),.1);color:var(--amberT);border-color:rgba(var(--amber-rgb),.3)}
+.b-emerald{background:rgba(var(--emerald-rgb),.1);color:var(--emeraldT);border-color:rgba(var(--emerald-rgb),.3)}
+.b-sky{background:rgba(var(--sky-rgb),.1);color:var(--skyT);border-color:rgba(var(--sky-rgb),.3)}
+.b-violet{background:rgba(var(--violet-rgb),.12);color:var(--violetT);border-color:rgba(var(--violet-rgb),.3)}
+.b-red{background:rgba(var(--red-rgb),.1);color:var(--redT);border-color:rgba(var(--red-rgb),.3)}
+
+.simstatus{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:52px}
+.simstatus .k{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.sstat{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;font-weight:700;font-size:13px;font-family:var(--mono)}
+.sstat-v{background:rgba(var(--emerald-rgb),.12);color:var(--emeraldT);border:1px solid rgba(var(--emerald-rgb),.45)}
+.sstat-b{background:rgba(var(--amber-rgb),.12);color:var(--amberT);border:1px solid rgba(var(--amber-rgb),.45)}
+.sstat-c{background:rgba(var(--sky-rgb),.12);color:var(--skyT);border:1px solid rgba(var(--sky-rgb),.45)}
+.sstat-a{background:rgba(100,116,139,.15);color:var(--muted2);border:1px solid rgba(100,116,139,.45)}
+.sstat-btn{background:none;border:none;padding:2px 4px;border-radius:8px;cursor:pointer;color:inherit}
+.sstat-btn:hover{background:rgba(148,163,184,.12)}
+.sstat-btn .k{display:inline-flex;align-items:center;gap:2px}
+.sstat-btn .k svg{opacity:.6}
+.menu.status-menu{right:auto;left:0;width:210px}
+.menu .mhd{padding:6px 12px 5px;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--line);margin-bottom:2px}
+.rowline.archived{opacity:.5}
+.rowline.archived:hover{opacity:1}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);z-index:60;display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line2);border-radius:10px;padding:10px 16px;font-size:13px;color:var(--text);box-shadow:0 20px 40px var(--shadow);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast svg{width:15px;height:15px;flex:none}
+.modal-overlay{position:fixed;inset:0;z-index:50;background:var(--overlay);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{width:100%;max-width:420px;border:1px solid var(--line2);background:var(--panel);border-radius:14px;padding:20px;box-shadow:0 30px 60px var(--shadow)}
+.modal h3{margin:0 0 10px;font-size:16px;color:var(--title);display:flex;align-items:center;gap:8px}
+.modal h3 svg{width:17px;height:17px}
+.modal p{margin:0 0 18px;font-size:14px;color:var(--text2);line-height:1.5}
+.modal .actions{display:flex;justify-content:flex-end;gap:10px}
+
+.grp-h{display:flex;width:100%;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;color:inherit}
+.grp-h-btn{display:flex;align-items:center;gap:12px;flex:1;min-width:0;background:none;border:none;color:inherit;text-align:left;padding:6px 0}
+.grp-h-btn:hover .cyctitle{color:var(--title)}
+.grp-h-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.divsel.small{padding:4px 8px}
+.grp-h-right .divsel select{font-size:13px}
+.rowline{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--line)}
+.rowline:hover{background:var(--row-hover)}
+.rowline.ret{background:rgba(var(--emerald-rgb),.05)}
+.rowline .name{font-weight:500;color:var(--title);display:flex;align-items:center;gap:8px}
+.badges{margin-top:6px;display:flex;flex-wrap:wrap;gap:6px}
+.txt-amber{color:var(--amberT)}.txt-emerald{color:var(--emeraldT)}.txt-red{color:var(--redT)}.txt-muted{color:var(--muted)}.txt-sky{color:var(--skyT)}
+.linkbtn{flex:1;text-align:left;background:none;border:none;color:inherit;padding:0}
+.iconbtn{border-radius:7px;padding:6px;color:var(--muted2);background:none;border:none}
+.iconbtn:hover{background:var(--hover2);color:var(--text)}
+.cbx{width:16px;height:16px;accent-color:var(--amber)}
+.cbx:disabled{opacity:.3}
+
+.menu{position:absolute;right:0;top:calc(100% + 4px);z-index:20;width:210px;border:1px solid var(--line2);background:var(--panel);border-radius:9px;padding:4px 0;box-shadow:0 20px 40px var(--shadow)}
+.menu button{display:flex;width:100%;align-items:center;gap:8px;padding:8px 12px;text-align:left;font-size:14px;background:none;border:none;color:var(--text2)}
+.menu button:hover{background:var(--chip)}
+.menu button.red{color:var(--redT)}
+.menu button.red:hover{background:rgba(var(--red-rgb),.1)}
+.menu button:disabled{color:var(--disabled)}
+.menu svg{width:14px;height:14px}
+.rel{position:relative}
+.overlay{position:fixed;inset:0;z-index:10}
+
+.note{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.note svg{width:12px;height:12px}
+.empty{border:1px dashed var(--line2);border-radius:12px;padding:48px;text-align:center;color:var(--muted)}
+
+.chart{width:100%;height:auto;display:block}
+.grid-l{stroke:var(--chip);stroke-width:1}
+.axis{fill:var(--muted);font-size:11px;font-family:var(--mono)}
+
+.foot{position:sticky;bottom:0;display:flex;align-items:center;justify-content:flex-end;gap:12px;border:1px solid var(--line);background:var(--foot-bg);backdrop-filter:blur(6px);border-radius:12px;padding:12px 16px}
+
+.grid3form{display:grid;gap:16px;grid-template-columns:repeat(3,1fr)}
+.grid2form{display:grid;gap:16px;grid-template-columns:1fr 1fr}
+.spin{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+h2.tt{font-size:20px;font-weight:700;color:var(--title);margin:0}
+.cmp-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.best{background:rgba(var(--emerald-rgb),.15);color:var(--emeraldT);font-weight:700;border-radius:6px;padding:4px 8px}
+.cell{display:inline-flex;align-items:center;gap:6px;border-radius:6px;padding:4px 8px;font-family:var(--mono)}
+.legend{display:flex;align-items:center;gap:16px;font-size:12px;color:var(--muted);margin-bottom:10px}
+.sw{width:10px;height:10px;border-radius:3px;display:inline-block}
+.sw.wide{width:16px}
+@media(max-width:900px){.grid3form,.grid2form{grid-template-columns:1fr}.hd-right{display:none}}
+
+/* marque Sothema + bascule de thème */
+header{border-bottom:none;box-shadow:0 1px 0 var(--line)}
+header::after{content:"";display:block;height:3px;background:linear-gradient(90deg,var(--brand-navy) 0%,var(--brand-sky) 62%,var(--brand-red) 100%)}
+.hd-end{display:flex;align-items:center;gap:16px}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:9px;border:1px solid var(--line2);background:var(--panel);color:var(--text2);padding:0;transition:background .15s,border-color .15s,color .15s}
+.theme-toggle:hover{background:var(--chip);border-color:var(--amber);color:var(--amberT)}
+.theme-toggle svg{width:17px;height:17px}
+.theme-toggle .i-sun{display:none}
+:root[data-theme="dark"] .theme-toggle .i-sun{display:block}
+:root[data-theme="dark"] .theme-toggle .i-moon{display:none}
+body{transition:background .2s,color .2s}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap hd">
+    <div class="logo">
+      <div>
+        <div class="title">CapaSim <span class="tag">MES · Pharma</span></div>
+        <div class="sub">Simulation de capacité — salle de contrôle</div>
+      </div>
+    </div>
+    <div class="hd-end">
+      <div class="hd-right">
+        <span><span class="dot"></span> Moteur en ligne</span>
+        <span id="scount"></span>
+      </div>
+      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Changer de thème" title="Changer de thème">
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<main id="app"></main>
+<div id="toast" class="toast"></div>
+<div id="modal-root"></div>
+
+<script>
+(function(){
+  var b=document.getElementById("theme-toggle"); if(!b) return;
+  b.addEventListener("click",function(){
+    var next=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";
+    document.documentElement.setAttribute("data-theme",next);
+    try{localStorage.setItem("capasim-theme",next);}catch(e){}
+  });
+})();
+</script>
+<script>
+"use strict";
+
+const IP = {
+  Activity:'<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
+  AlertTriangle:'<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+  BarChart3:'<path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>',
+  Boxes:'<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/>',
+  CalendarDays:'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  CheckCircle2:'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+  ChevronDown:'<polyline points="6 9 12 15 18 9"/>',
+  ChevronRight:'<polyline points="9 18 15 12 9 6"/>',
+  Clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  Copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+  Cpu:'<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/>',
+  Filter:'<polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>',
+  Gauge:'<path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/>',
+  LayoutGrid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>',
+  Layers:'<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>',
+  ListChecks:'<path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><line x1="13" y1="6" x2="21" y2="6"/><line x1="13" y1="12" x2="21" y2="12"/><line x1="13" y1="18" x2="21" y2="18"/>',
+  Play:'<polygon points="6 3 20 12 6 21 6 3"/>',
+  Plus:'<line x1="5" y1="12" x2="19" y2="12"/><line x1="12" y1="5" x2="12" y2="19"/>',
+  Radio:'<circle cx="12" cy="12" r="2"/><path d="M4.93 19.07a10 10 0 0 1 0-14.14"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M7.76 16.24a6 6 0 0 1 0-8.49"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49"/>',
+  Settings2:'<path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/>',
+  Sigma:'<path d="M18 7V5a1 1 0 0 0-1-1H6.5a.5.5 0 0 0-.4.8l4.5 6-4.5 6a.5.5 0 0 0 .4.8H17a1 1 0 0 0 1-1v-2"/>',
+  Star:'<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+  Download:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
+  Trash2:'<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>',
+  TrendingUp:'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>',
+  Zap:'<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+  Info:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>',
+  ArrowLeft:'<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>',
+  ArrowRight:'<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>',
+  ClipboardList:'<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/>',
+  PackageCheck:'<path d="m16 16 2 2 4-4"/><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/>',
+  CircleSlash:'<circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>',
+  CircleDot:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
+  MinusCircle:'<circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/>',
+  Sliders:'<line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/>',
+  Building2:'<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>',
+};
+IP.TriangleAlert = IP.AlertTriangle;
+function icon(name,size,cls){ size=size||16; return '<svg viewBox="0 0 24 24" width="'+size+'" height="'+size+'" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" '+(cls?('class="'+cls+'"'):'')+'>'+(IP[name]||'')+'</svg>'; }
+
+const DIVISIONS = {
+  "Formes sèches":["Pesée / Dispensing","Granulation","Séchage (lit d'air)","Calibrage","Compression","Pelliculage","Mise en gélules"],
+  "Injectables / Stériles":["Préparation solution","Filtration stérilisante","Répartition aseptique","Lyophilisation","Sertissage","Mirage / Inspection"],
+  "Conditionnement":["Cond. primaire (blister)","Sérialisation","Cond. secondaire (étui)","Étuvage / Fardelage"],
+};
+const DIVISION_CODES = ["DIVA","DIVB","DIVC","DIVE","DIVF","DIVG","DIVH","DIVN","DIVZ"];
+const CODE_TO_PROCESS = {
+  DIVA:"Formes sèches", DIVB:"Formes sèches", DIVC:"Formes sèches", DIVN:"Formes sèches",
+  DIVE:"Injectables / Stériles", DIVF:"Injectables / Stériles", DIVG:"Injectables / Stériles",
+  DIVH:"Conditionnement", DIVZ:"Conditionnement"
+};
+const CAL_OPTIONS = ["2x8 (16h)","3x8 (24h)","1x8 (8h)","2x8 + Sam.","Continu 24/7"];
+const LOT_METHODS = {min:"Lot minimum",fixe:"Lot fixe",multiple:"Lot multiple",eco:"Lot économique"};
+const LOT_SHORT = {min:"min",fixe:"fixe",multiple:"mult.",eco:"éco"};
+const rnd = s => { const x=Math.sin(s)*10000; return x-Math.floor(x); };
+
+function genTS(seed,periods,capBase,mode){
+  const a=[]; const constrained=mode!=="infinie";
+  for(let i=0;i<periods;i++){
+    const cap=Math.round(capBase*(0.9+rnd(seed+i)*0.2));
+    let ch=Math.round(cap*(0.7+rnd(seed+i*2.3)*0.7));
+    if(constrained) ch=Math.min(ch,Math.round(cap*(0.95+rnd(seed+i)*0.08)));
+    a.push({periode:"S"+(i+1),charge:ch,capacite:cap});
+  }
+  return a;
+}
+function genWS(seed,mode,processType,lotDefault,bottlenecks){
+  const bmap={}; (bottlenecks||[]).forEach(b=>bmap[b.poste]=b); const constrained=mode!=="infinie";
+  return DIVISIONS[processType].map((w,idx)=>{
+    const isB=!!bmap[w];
+    const cap=Math.round(120+rnd(seed+idx)*90);
+    let ch=Math.round(cap*((isB?0.85:0.55)+rnd(seed+idx*3.1)*(isB?0.25:0.6)));
+    if(constrained) ch=Math.min(ch,Math.round(cap*(0.99+rnd(seed+idx)*0.04)));
+    const lot=isB?{method:bmap[w].method,value:bmap[w].value}:Object.assign({},lotDefault||{method:"fixe",value:200});
+    return {name:w,calendar:CAL_OPTIONS[Math.floor(rnd(seed+idx*5)*CAL_OPTIONS.length)],charge:ch,capacite:cap,ecart:ch-cap,isBottleneck:isB,lot};
+  });
+}
+const PHARMA_ARTS = {
+  "Formes sèches":["CP Amoxicilline 500mg","GEL Oméprazole 20mg","CP Paracétamol 1g","CP Metformine 850mg","GEL Prégabaline 75mg"],
+  "Injectables / Stériles":["INJ Énoxaparine 40mg","FL Insuline 10mL","INJ Ceftriaxone 1g","FL Méthotrexate 50mg"],
+  "Conditionnement":["Blister Amoxicilline x16","Étui Oméprazole x28","Kit Insuline 5 stylos","Fardeau Paracétamol x8"],
+};
+function genOFs(seed,count,processType){
+  const arts=PHARMA_ARTS[processType]; const st=["couvert","couvert","couvert","partiel","partiel","non"]; const out=[];
+  for(let i=0;i<count;i++){
+    out.push({of:"OF-"+(26000+Math.floor(rnd(seed+i)*900)),lot:"LOT-"+String.fromCharCode(65+(i%6))+(2600+Math.floor(rnd(seed+i*1.3)*400)),article:arts[Math.floor(rnd(seed+i*2.2)*arts.length)],qte:Math.round(50+rnd(seed+i*3)*400),besoin:"S"+(1+Math.floor(rnd(seed+i*4)*12)),statut:st[Math.floor(rnd(seed+i*1.7)*st.length)]});
+  }
+  return out;
+}
+function genRup(seed,mode,processType,bottlenecks){
+  if(mode==="infinie") return [];
+  const bns=bottlenecks||[];
+  const postes=bns.length?bns.map(b=>b.poste):DIVISIONS[processType];
+  const out=[]; const n=2+Math.floor(rnd(seed)*4);
+  for(let i=0;i<n;i++){
+    out.push({periode:"S"+(1+Math.floor(rnd(seed+i)*12)),poste:postes[Math.floor(rnd(seed+i*2)*postes.length)],surcharge:Math.round(10+rnd(seed+i*3)*60),of:"OF-"+(26000+Math.floor(rnd(seed+i*4)*900)),report:"S"+(2+Math.floor(rnd(seed+i*5)*12))});
+  }
+  return out;
+}
+function buildSim(cfg){
+  const divs=cfg.divisions||["DIVA"]; const primary=divs[0]||"DIVA";
+  const processType=CODE_TO_PROCESS[primary]||"Formes sèches";
+  const periods=cfg.periodType==="trimestriel"?13:5; const capBase=cfg.periodType==="trimestriel"?900:340;
+  return Object.assign({},cfg,{
+    divisions:divs, processType:processType,
+    timeSeries:genTS(cfg.seed,periods,capBase,cfg.capacityMode),
+    workstations:genWS(cfg.seed+50,cfg.capacityMode,processType,cfg.lotDefault,cfg.bottlenecks),
+    ofs:genOFs(cfg.seed+100,8,processType),
+    ruptures:genRup(cfg.seed+200,cfg.capacityMode,processType,cfg.bottlenecks),
+  });
+}
+
+let SIMS = [];   // cache local : la source de vérité est la table Simulation de Fabric
+let SIMS_LOADING = false;
+let EXCEL_IDS = null;          // ensemble des ID_SIM ayant un fichier Excel ; null = inconnu
+const EXCEL_DOWNLOADING = {};  // id -> true pendant le téléchargement
+
+function simFromFabric(r, prev){
+  const divs = (r.divisions||[]);
+  return {
+    id: String(r.id),
+    name: r.name,
+    cycle: (r.created||"").slice(0,7) || new Date().toISOString().slice(0,7),
+    divisions: (divs.length===1 && divs[0]==="ALL") ? DIVISION_CODES.slice() : divs,
+    capacityMode: r.capacityMode,
+    positioning: r.positioning,
+    status: r.status,
+    retained: prev ? !!prev.retained : false,   // « retenu » n'existe pas encore côté Fabric
+    timeSeries: [], workstations: [], ofs: [], ruptures: [], kpis: null
+  };
+}
+async function loadSims(){
+  SIMS_LOADING = true; render();
+  try{
+    const resp = await fetch("/api/simulations");
+    const data = await resp.json();
+    if(!resp.ok || !data.success) throw new Error(data.message || "Impossible de charger les scénarios depuis Fabric.");
+    const prev = {}; SIMS.forEach(s=>{ prev[s.id]=s; });
+    SIMS = data.simulations.map(r=>simFromFabric(r, prev[String(r.id)]));
+    S.selected = S.selected.filter(id=>SIMS.some(s=>s.id===id));
+    try{
+      const er = await fetch("/api/simulations/excel-files");
+      const ed = await er.json();
+      EXCEL_IDS = (er.ok && ed.success) ? new Set(ed.ids) : null;
+    }catch(e){ EXCEL_IDS = null; }
+  }catch(err){
+    showToast(err.message,"AlertTriangle","red");
+  }finally{
+    SIMS_LOADING = false; render();
+  }
+}
+
+const STATUS_SIM = {
+  brouillon:{label:"Brouillon",letter:"B",cls:"sstat-b"},
+  encours:  {label:"En cours",letter:"E",cls:"sstat-c"},
+  valide:   {label:"Validé", letter:"V",cls:"sstat-v"},
+  archive:  {label:"Archivé",letter:"A",cls:"sstat-a"},
+};
+const STATUS_TRANSITIONS = {
+  brouillon:[{to:"encours",label:"Démarrer",icon:"Play"}],
+  encours:  [{to:"valide",label:"Valider",icon:"CheckCircle2"},
+             {to:"brouillon",label:"Remettre en brouillon",icon:"ArrowLeft",confirm:"Remettre ce scénario en brouillon annulera sa progression « En cours ». Continuer ?"}],
+  valide:   [{to:"archive",label:"Archiver",icon:"PackageCheck"},
+             {to:"encours",label:"Rouvrir",icon:"ArrowLeft",confirm:"Rouvrir ce scénario défait sa validation et le repasse en « En cours ». Continuer ?"}],
+  archive:  [{to:"valide",label:"Désarchiver",icon:"ArrowLeft",confirm:"Sortir ce scénario des archives et le repasser en « Validé » ?"}],
+};
+function capMeta(mode){
+  if(mode==="infinie") return {label:"Capacité infinie", short:"Infinie", tone:"sky", ic:"Zap"};
+  if(mode==="matiere") return {label:"Matière", short:"Matière", tone:"emerald", ic:"Boxes"};
+  return {label:"Capacité finie", short:"Finie", tone:"red", ic:"Cpu"};
+}
+function sameDivSet(a,b){ return (a||[]).slice().sort().join(',')===(b||[]).slice().sort().join(','); }
+
+const S = {
+  view:"list", selected:[], cycleDiv:{}, filter:"all",
+  openCycles:{}, menu:null, statusMenu:null, pendingStatus:null, running:false,
+  /* cSections sans 'logs' */
+  cSections:{ident:true,cap:true,ident2:true,arrets:true,horizon:true,pos:true,verif:true},
+  cName:"Nouveau scénario",
+  cDesc:"Simulation depuis interface", cUser:"ADMIN", cLaunchDate:"",
+  cDivisions:[DIVISION_CODES[0]],
+  cArrets:[{deb:"",fin:""}],
+  cHorizon:52, cHorizonRegroup:4,
+  cPos:"auplustot", cCap:"finie", cDefCal:"2x8 (16h)",
+  cHorMat:30, cAdvRet:21, cMaxGap:336, cHorDeb:"", cHorFin:"",
+  cVerifStock:"ACTIVE", cVerifEcart:"ACTIVE",
+  _lastRenderedView:null,
+};
+
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function badge(txt,tone,ic){ return '<span class="badge'+(tone?(' b-'+tone):'')+'">'+(ic?icon(ic,12):'')+esc(txt)+'</span>'; }
+function statusCell(sim){
+  const st = STATUS_SIM[sim.status] || STATUS_SIM.brouillon;
+  const trans = STATUS_TRANSITIONS[sim.status] || STATUS_TRANSITIONS.brouillon;
+  let h='<div class="rel"><button class="simstatus sstat-btn" data-act="status-toggle" data-id="'+sim.id+'" title="Changer le statut">';
+  h+='<span class="sstat '+st.cls+'">'+st.letter+'</span>';
+  h+='<span class="k">'+st.label+icon("ChevronDown",11)+'</span></button>';
+  if(S.statusMenu===sim.id){
+    h+='<div class="overlay" data-act="status-close"></div><div class="menu status-menu">';
+    h+='<div class="mhd">Changer le statut</div>';
+    trans.forEach(function(t){ h+='<button data-act="status-set" data-id="'+sim.id+'" data-to="'+t.to+'">'+icon(t.icon,14)+esc(t.label)+'</button>'; });
+    h+='</div>';
+  }
+  return h+'</div>';
+}
+function divBadges(divs,tone,ic){
+  const list = divs||[];
+  const isAll = list.length>0 && DIVISION_CODES.every(c=>list.includes(c));
+  return isAll ? badge("ALL",tone,ic) : list.map(d=>badge(d,tone,ic)).join('');
+}
+
+function chartMulti(data,keys,colors){
+  const W=720,H=300,pl=46,pr=14,pt=14,pb=28,iw=W-pl-pr,ih=H-pt-pb;
+  let maxV=0; data.forEach(d=>keys.forEach(k=>{if(d[k]>maxV)maxV=d[k];})); maxV=(maxV||1)*1.12;
+  const n=data.length,band=iw/n;
+  const X=i=>pl+band*i+band/2, Y=v=>pt+ih-(v/maxV)*ih;
+  let g="";
+  for(let t=0;t<=4;t++){const yy=pt+ih-(t/4)*ih;g+='<line class="grid-l" x1="'+pl+'" y1="'+yy+'" x2="'+(W-pr)+'" y2="'+yy+'"/><text class="axis" x="'+(pl-6)+'" y="'+(yy+3)+'" text-anchor="end">'+Math.round(maxV*t/4)+'</text>';}
+  const lines=keys.map((k,ki)=>{const pts=data.map((d,i)=>X(i)+","+Y(d[k])).join(" ");return '<polyline points="'+pts+'" fill="none" stroke="'+colors[ki]+'" stroke-width="2"/>';}).join("");
+  const xl=data.map((d,i)=>'<text class="axis" x="'+X(i)+'" y="'+(H-8)+'" text-anchor="middle">'+d.periode+'</text>').join("");
+  return '<svg class="chart" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet">'+g+lines+xl+'</svg>';
+}
+
+function viewList(){
+  const selDivs = S.selected.length ? (SIMS.find(s=>s.id===S.selected[0])||{}).divisions : null;
+  const groups={};
+  SIMS.forEach(s=>{ if(S.filter==="retained" && !s.retained) return; (groups[s.cycle]=groups[s.cycle]||[]).push(s); });
+  const cks=Object.keys(groups);
+  let h='<div class="stack">';
+  h+='<div class="row between">';
+    h+='<div class="row" style="gap:8px">';
+      h+='<div class="seg"><button data-act="set-filter" data-v="all" class="'+(S.filter==="all"?"on":"")+'">'+icon("Filter",13)+'Tous les scénarios</button><button data-act="set-filter" data-v="retained" class="'+(S.filter==="retained"?"on":"")+'">'+icon("Filter",13)+'Scénarios retenus</button></div>';
+    h+='</div>';
+    h+='<div class="row" style="gap:8px">';
+      if(S.selected.length>=2) h+='<button class="btn btn-sky" data-act="open-compare">'+icon("LayoutGrid",15)+'Comparer ('+S.selected.length+')</button>';
+      h+='<button class="btn btn-amber" data-act="new-sim">'+icon("Plus",15)+'Nouvelle simulation</button>';
+    h+='</div>';
+  h+='</div>';
+  if(selDivs && selDivs.length) h+='<div class="note">'+icon("Info",12)+'Comparaison au sein des divisions <span class="txt-sky" style="margin:0 3px">'+esc(selDivs.join(' · '))+'</span> — 2 à 4 scénarios.</div>';
+  cks.forEach(cycle=>{
+    const grpAll=groups[cycle];
+    const cycleDiv = S.cycleDiv[cycle] || "all";
+    const divsInCycle = grpAll.reduce((a,s)=>{ (s.divisions||[]).forEach(d=>{if(a.indexOf(d)<0)a.push(d);}); return a; },[]);
+    const grp = grpAll.filter(s=> cycleDiv==="all" || (s.divisions||[]).includes(cycleDiv));
+    const open = S.openCycles[cycle]===false ? false : true;
+    const ret=grp.filter(s=>s.retained);
+    let divOpts='<option value="all"'+(cycleDiv==="all"?" selected":"")+'>Toutes les divisions</option>'+divsInCycle.map(d=>'<option value="'+esc(d)+'"'+(cycleDiv===d?" selected":"")+'>'+esc(d)+'</option>').join("");
+    h+='<div class="card">';
+    h+='<div class="grp-h">';
+      h+='<button class="grp-h-btn" data-act="toggle-cycle" data-cycle="'+esc(cycle)+'">'+icon(open?"ChevronDown":"ChevronRight",16,"chev")+icon("CalendarDays",16,"txt-amber")+'<span class="cyctitle" style="font-weight:600;color:var(--title)">'+esc(cycle)+'</span>'+badge(grp.length+" scénario"+(grp.length>1?"s":""))+'</button>';
+      h+='<div class="grp-h-right">';
+        h+='<div class="divsel"'+(cycleDiv!=="all"?' style="border-color:rgba(167,139,250,.7)"':'')+'>'+icon("Building2",14,"txt-sky")+'<select data-act="cycle-division" data-cycle="'+esc(cycle)+'">'+divOpts+'</select></div>';
+        h+=(ret.length?badge(ret.length+" retenu"+(ret.length>1?"s":""),"emerald","Star"):badge("Aucun scénario retenu","amber","AlertTriangle"));
+      h+='</div>';
+    h+='</div>';
+    if(open){
+      h+='<div>';
+      if(grp.length===0) h+='<div style="padding:14px 16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px">Aucun scénario pour cette division dans ce cycle.</div>';
+      grp.forEach(s=>{
+        const isSel=S.selected.indexOf(s.id)>-1;
+        const lockDiff = selDivs && selDivs.length && !(s.divisions||[]).some(d=>selDivs.includes(d));
+        const disabled=!isSel && (S.selected.length>=4 || lockDiff);
+        const cm=capMeta(s.capacityMode);
+        h+='<div class="rowline'+(s.retained?" ret":"")+(s.status==="archive"?" archived":"")+'">';
+        h+='<input type="checkbox" class="cbx" data-act="toggle-select" data-id="'+s.id+'" '+(isSel?"checked":"")+' '+(disabled?"disabled":"")+' title="'+(lockDiff?"Comparaison limitée à une division commune":"")+'"/>';
+        h+='<div class="linkbtn">';
+          h+='<div class="name">'+(s.retained?icon("Star",14,"txt-emerald"):"")+esc(s.name)+'</div>';
+          h+='<div class="badges">'+divBadges(s.divisions,"violet","Building2")+badge(cm.label,cm.tone,cm.ic)+badge(s.positioning==="auplustot"?"Au plus tôt":"Au plus tard",null,"Clock")+'</div>';
+        h+='</div>';
+        const hasXl = EXCEL_IDS===null ? true : EXCEL_IDS.has(s.id);
+        const dlBusy = !!EXCEL_DOWNLOADING[s.id];
+        h+='<button class="iconbtn" data-act="download-excel" data-id="'+s.id+'" '+((hasXl&&!dlBusy)?'':'disabled ')
+          +'title="'+(hasXl?"Télécharger le fichier Excel":"Aucun fichier Excel pour cette simulation")+'"'
+          +(hasXl?'':' style="opacity:.35;cursor:not-allowed"')+'>'
+          +(dlBusy?icon("Activity",16,"spin"):icon("Download",16))+'</button>';
+        h+=statusCell(s);
+        h+='<div class="rel"><button class="iconbtn" data-act="menu-toggle" data-id="'+s.id+'">'+icon("Settings2",16)+'</button>';
+        if(S.menu===s.id){
+          h+='<div class="overlay" data-act="menu-close"></div><div class="menu">';
+          h+='<button data-act="retain" data-id="'+s.id+'" '+(s.retained?"disabled":"")+'>'+icon("Star",14)+(s.retained?"Déjà retenu":"Retenir ce scénario")+'</button>';
+          h+='<button data-act="duplicate" data-id="'+s.id+'">'+icon("Copy",14)+'Dupliquer</button>';
+          h+='<button class="red" data-act="delete" data-id="'+s.id+'">'+icon("Trash2",14)+'Supprimer</button>';
+          h+='</div>';
+        }
+        h+='</div></div>';
+      });
+      h+='</div>';
+    }
+    h+='</div>';
+  });
+  if(cks.length===0) h+='<div class="empty">Aucun scénario pour ce filtre.</div>';
+  h+='</div>';
+  return h;
+}
+
+function section(key,title,ic,body,hint){
+  const open=S.cSections[key]!==false;
+  return '<div class="card"><button class="card-h" data-act="c-section" data-sec="'+key+'"><div class="head">'+icon(ic,16)+esc(title)+'</div>'+icon(open?"ChevronDown":"ChevronRight",16,"chev")+'</button>'+(open?('<div class="card-b">'+(hint?'<p class="hint">'+icon("Info",12)+esc(hint)+'</p>':'')+body+'</div>'):'')+'</div>';
+}
+function arretsRows(){
+  const rows = (S.cArrets && S.cArrets.length) ? S.cArrets : [{deb:"",fin:""}];
+  return rows.map((a,i)=>'<div class="arret-row" data-idx="'+i+'">'
+    +'<div class="datewrap"><span class="dl">Début</span><input type="date" class="arret-deb" value="'+esc(a.deb||'')+'" aria-label="Date de début"/></div>'
+    +'<span class="arrow">'+icon("ArrowRight",16)+'</span>'
+    +'<div class="datewrap"><span class="dl">Fin</span><input type="date" class="arret-fin" value="'+esc(a.fin||'')+'" aria-label="Date de fin"/></div>'
+    +'<button type="button" class="iconbtn" data-act="arret-remove" data-idx="'+i+'" title="Supprimer cette période">'+icon("Trash2",14)+'</button>'
+    +'</div>').join("");
+}
+
+function viewCreate(){
+  let h='<div class="stack">';
+  h+='<button class="link" data-act="back">'+icon("ArrowLeft",15)+'Retour à la liste</button>';
+
+  /* 1. Identification */
+  let ident='<div class="grid3form">';
+  ident+='<label class="fld"><span class="lbl">Nom du scénario</span><input type="text" id="c-name" value="'+esc(S.cName)+'" style="width:100%"/></label>';
+  ident+='<label class="fld"><span class="lbl">Description</span><input type="text" id="c-desc" value="'+esc(S.cDesc)+'" style="width:100%"/></label>';
+  ident+='<label class="fld"><span class="lbl">Utilisateur</span><input type="text" id="c-user" value="'+esc(S.cUser)+'" style="width:100%"/></label>';
+  ident+='<label class="fld"><span class="lbl">Horizon de la simulation (semaines)</span><input type="number" id="c-horizon" value="'+S.cHorizon+'" min="1" class="mono" style="width:100%"/></label>';
+  ident+='<label class="fld"><span class="lbl">Date de lancement</span><input type="date" id="c-launch-date" value="'+esc(S.cLaunchDate)+'" style="width:100%" aria-label="Date de lancement"/></label>';
+  ident+='</div>';
+  h+=section("ident","Identification","ClipboardList",ident);
+
+  /* 2. Mode de capacité */
+  const capHint={
+    finie:"Capacité finie : la charge est plafonnée par la capacité disponible ; les surcharges génèrent des ruptures et des reports.",
+    infinie:"Capacité infinie : aucune limite de capacité ; référence pour mesurer le besoin brut.",
+    matiere:"Mode matière : la capacité est contrainte par la disponibilité des matières premières et composants. Les manques matière induisent des ruptures et des reports."
+  }[S.cCap] || "";
+  let cap='<div class="seg big">';
+  cap+='<button data-act="c-cap" data-v="finie" class="'+(S.cCap==="finie"?"on":"")+'">'+icon("Cpu",14)+'Finie</button>';
+  cap+='<button data-act="c-cap" data-v="infinie" class="'+(S.cCap==="infinie"?"on":"")+'">'+icon("Zap",14)+'Infinie</button>';
+  cap+='<button data-act="c-cap" data-v="matiere" class="'+(S.cCap==="matiere"?"on":"")+'">'+icon("Boxes",14)+'Matière</button>';
+  cap+='</div>';
+  h+=section("cap","Mode de capacité","Gauge",cap,capHint);
+
+  /* 3. Divisions */
+  let divisions='<div class="lbl">Divisions</div><div class="divchips">';
+  DIVISION_CODES.forEach(code=>{
+    const on = S.cDivisions.indexOf(code)>-1;
+    divisions+='<button type="button" class="divchip'+(on?" on":"")+'" data-act="c-div-toggle" data-code="'+code+'">'+esc(code)+'</button>';
+  });
+  divisions+='</div>';
+  divisions+='<div class="divchips-tools"><button type="button" class="linkbtn-sm" data-act="c-div-all">'+icon("CheckCircle2",12)+' Tout sélectionner</button><button type="button" class="linkbtn-sm" data-act="c-div-none">'+icon("CircleSlash",12)+' Tout désélectionner</button><span style="margin-left:auto;font-size:12px;color:var(--muted)">'+S.cDivisions.length+' / '+DIVISION_CODES.length+' sélectionnée'+(S.cDivisions.length>1?'s':'')+'</span></div>';
+  if(!S.cDivisions.length) divisions+='<div class="note" style="margin-top:8px;color:var(--redT)">'+icon("AlertTriangle",12)+' Au moins une division est requise.</div>';
+  h+=section("ident2","Divisions","Building2",divisions,"Sélectionnez une ou plusieurs divisions. Le type de procédé de la première division pilote la génération des postes de charge.");
+
+  /* 4. Arrêts (uniquement si capacité = Infinie) */
+  if(S.cCap === "infinie"){
+    let arrets='<div id="c-arrets-list">'+arretsRows()+'</div>';
+    arrets+='<button type="button" class="btn btn-ghost" data-act="arret-add">'+icon("Plus",14)+'Ajouter une période</button>';
+    h+=section("arrets","Arrêts de production","CircleSlash",arrets,"Chaque ligne définit une période d'arrêt (début → fin). Cliquez sur le champ ou sur l'icône calendrier pour choisir une date.");
+  }
+
+  /* 5. Horizon — Horizon matière uniquement si capacité = Matière */
+  let horizon='<div class="grid3form">';
+  horizon+='<label class="fld"><span class="lbl">Horizon de regroupement (semaines)</span><input type="number" id="c-horizon-regroup" value="'+S.cHorizonRegroup+'" min="1" class="mono" style="width:100%"/></label>';
+  if(S.cCap === "matiere"){
+    horizon+='<label class="fld"><span class="lbl">Horizon matière critique (jours)</span><input type="number" id="c-hormat" value="'+S.cHorMat+'" min="0" class="mono" style="width:100%"/></label>';
+  }
+  horizon+='<label class="fld"><span class="lbl">Avance / Retard (jours)</span><input type="number" id="c-advret" value="'+S.cAdvRet+'" min="0" class="mono" style="width:100%"/></label>';
+  horizon+='<label class="fld"><span class="lbl">Écart maximal entre opérations (heures)</span><input type="number" id="c-maxgap" value="'+S.cMaxGap+'" min="0" class="mono" style="width:100%"/></label>';
+  horizon+='<label class="fld"><span class="lbl">Début de l\'horizon</span><input type="date" id="c-hordeb" value="'+esc(S.cHorDeb)+'" style="width:100%" aria-label="Début de l\'horizon"/></label>';
+  horizon+='<label class="fld"><span class="lbl">Fin de l\'horizon</span><input type="date" id="c-horfin" value="'+esc(S.cHorFin)+'" style="width:100%" aria-label="Fin de l\'horizon"/></label>';
+  horizon+='</div>';
+  h+=section("horizon","Horizon & Paramètres de planification","CalendarDays",horizon,"Fenêtre de consolidation des besoins et bornes temporelles du moteur de planification.");
+
+  /* 6. Positionnement */
+  const posHint=S.cPos==="auplustot"?"Au plus tôt : les ordres sont jalonnés dès que possible à partir de la date de début, maximisant l'avance.":"Au plus tard : les ordres sont jalonnés au plus près de la date de besoin, minimisant les en-cours et le stock.";
+  let pos='<div class="seg big"><button data-act="c-pos" data-v="auplustot" class="'+(S.cPos==="auplustot"?"on":"")+'">'+icon("TrendingUp",14)+'Au plus tôt</button><button data-act="c-pos" data-v="auplustard" class="'+(S.cPos==="auplustard"?"on":"")+'">'+icon("Clock",14)+'Au plus tard</button></div>';
+  h+=section("pos","Règle de positionnement de la charge","Sliders",pos,posHint);
+
+  /* 7. Vérifications (stock + écarts opérations) */
+  const verifOpts = v => ['AUTO','ACTIVE','INACTIVE'].map(o=>'<option'+(v===o?" selected":"")+'>'+o+'</option>').join("");
+  let verif='<div class="grid2form">';
+  verif+='<label class="fld"><span class="lbl">Vérification du stock</span><select id="c-verif-stock" style="width:100%">'+verifOpts(S.cVerifStock)+'</select></label>';
+  verif+='<label class="fld"><span class="lbl">Vérification des écarts opérations</span><select id="c-verif-ecart" style="width:100%">'+verifOpts(S.cVerifEcart)+'</select></label>';
+  verif+='</div>';
+  h+=section("verif","Vérifications","ListChecks",verif,"AUTO : comportement par défaut du moteur. ACTIVE / INACTIVE force l'activation ou la désactivation de chaque contrôle.");
+
+  /* 8. Logs — SECTION SUPPRIMÉE */
+
+  if(S.running && S.runMsg) h+='<div class="note">'+icon("Info",12)+esc(S.runMsg)+'</div>';
+  h+='<div class="foot"><button class="btn btn-ghost" data-act="back">Annuler</button><button class="btn btn-amber" data-act="launch" '+(S.running?"disabled":"")+'>'+(S.running?(icon("Activity",16,"spin")+"Calcul en cours…"):(icon("Play",16)+"Lancer la simulation"))+'</button></div>';
+  h+='</div>';
+  return h;
+}
+
+const CMPC=["var(--c1)","var(--c2)","var(--c3)","var(--c4)"];
+function viewCompare(){
+  const sims=SIMS.filter(s=>S.selected.indexOf(s.id)>-1);
+  if(sims.length<2) return viewList();
+  if (sims.some(s => !s.kpis || !s.timeSeries || s.timeSeries.length === 0)) {
+    return '<div class="stack">' +
+      '<button class="link" data-act="back">' + icon("ArrowLeft",15) + 'Retour à la liste</button>' +
+      '<div class="empty">Les indicateurs de ces scénarios ne sont pas encore chargés.</div>' +
+      '</div>';
+  }
+  const rows=[["quantite","Quantité produite",""],["tauxService","Taux de service","%"],["tauxCouverture","Taux de couverture","%"]];
+  let h='<div class="stack">';
+  h+='<button class="link" data-act="back">'+icon("ArrowLeft",15)+'Retour à la liste</button>';
+  h+='<div class="row" style="gap:8px"><h2 class="tt" style="display:flex;align-items:center;gap:8px">'+icon("LayoutGrid",20,"txt-amber")+'Comparaison de '+sims.length+' scénarios</h2>'+divBadges(sims[0].divisions,"violet","Building2")+'</div>';
+  h+='<div class="tbl-wrap"><table><thead><tr><th>Indicateur</th>';
+  sims.forEach((s,i)=>{const cm=capMeta(s.capacityMode);h+='<th><div style="display:flex;align-items:center;gap:8px"><span class="cmp-dot" style="background:'+CMPC[i]+'"></span><span style="font-weight:600;color:var(--title)">'+esc(s.name)+'</span>'+(s.retained?icon("Star",13,"txt-emerald"):"")+'</div><div class="badges" style="margin-top:4px">'+badge((s.divisions||[]).join(' · '),"violet")+badge(cm.short,cm.tone)+badge(s.positioning==="auplustot"?"+ tôt":"+ tard")+'</div></th>';});
+  h+='</tr></thead><tbody>';
+  rows.forEach(r=>{
+    const vals=sims.map(s=>s.kpis[r[0]]),best=Math.max.apply(null,vals);
+    h+='<tr><td style="color:var(--text2)">'+r[1]+'</td>';
+    sims.forEach(s=>{const v=s.kpis[r[0]],bs=v===best;h+='<td><span class="cell'+(bs?" best":"")+'">'+(bs?icon("CheckCircle2",13):"")+v+r[2]+'</span></td>';});
+    h+='</tr>';
+  });
+  h+='</tbody></table></div>';
+  const len=Math.min.apply(null,sims.map(s=>s.timeSeries.length));
+  const overlay=[]; for(let i=0;i<len;i++){const row={periode:sims[0].timeSeries[i].periode};sims.forEach((s,idx)=>row["s"+idx]=s.timeSeries[i].charge);overlay.push(row);}
+  let leg=sims.map((s,i)=>'<span><span class="sw wide" style="background:'+CMPC[i]+'"></span> '+esc(s.name)+'</span>').join("");
+  h+='<div class="card card-b" style="border-radius:12px"><h3 style="margin:0 0 12px;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--text2)">'+icon("BarChart3",16,"txt-amber")+'Charge superposée par période</h3><div class="legend" style="flex-wrap:wrap">'+leg+'</div>'+chartMulti(overlay,sims.map((s,i)=>"s"+i),CMPC)+'</div>';
+  h+='</div>';
+  return h;
+}
+
+function syncCreateForm(){
+  if(S.view!=="create") return;
+  const gv = id => { const el=document.getElementById(id); return el?el.value:null; };
+  const v = gv("c-name"); if(v!==null) S.cName=v;
+  const d = gv("c-desc"); if(d!==null) S.cDesc=d;
+  const u = gv("c-user"); if(u!==null) S.cUser=u;
+  const ld = gv("c-launch-date"); if(ld!==null) S.cLaunchDate=ld;
+  const hv = gv("c-horizon"); if(hv!==null) S.cHorizon=+hv||1;
+  const hr = gv("c-horizon-regroup"); if(hr!==null) S.cHorizonRegroup=+hr||1;
+  const hm = gv("c-hormat"); if(hm!==null) S.cHorMat=+hm||0;
+  const ar = gv("c-advret"); if(ar!==null) S.cAdvRet=+ar||0;
+  const mg = gv("c-maxgap"); if(mg!==null) S.cMaxGap=+mg||0;
+  const hd = gv("c-hordeb"); if(hd!==null) S.cHorDeb=hd;
+  const hf = gv("c-horfin"); if(hf!==null) S.cHorFin=hf;
+  const vs = gv("c-verif-stock"); if(vs!==null) S.cVerifStock=vs;
+  const ve = gv("c-verif-ecart"); if(ve!==null) S.cVerifEcart=ve;
+  const arretRows = document.querySelectorAll("#c-arrets-list .arret-row");
+  if(arretRows.length){
+    const arrets=[];
+    arretRows.forEach(row=>{
+      const deb=row.querySelector(".arret-deb").value;
+      const fin=row.querySelector(".arret-fin").value;
+      arrets.push({deb:deb, fin:fin});
+    });
+    S.cArrets=arrets;
+  }
+}
+
+function showToast(msg,ic,tone){
+  const t=document.getElementById("toast");
+  t.innerHTML=icon(ic||"CheckCircle2",15,"txt-"+(tone||"emerald"))+"<span>"+esc(msg)+"</span>";
+  t.classList.add("show");
+  clearTimeout(window.__toastT);
+  window.__toastT=setTimeout(function(){t.classList.remove("show");},2200);
+}
+async function downloadExcel(id){
+  if(EXCEL_DOWNLOADING[id]) return;
+  EXCEL_DOWNLOADING[id]=true; render();
+  try{
+    const resp = await fetch("/api/simulations/"+encodeURIComponent(id)+"/excel");
+    if(!resp.ok){
+      let msg="Téléchargement impossible.";
+      try{ const d=await resp.json(); msg=d.message||msg; }catch(e){}
+      if(resp.status===404 && EXCEL_IDS) EXCEL_IDS.delete(id);
+      throw new Error(msg);
+    }
+    const blob = await resp.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "simulation_"+id+".xlsx";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    showToast("Excel téléchargé : simulation_"+id+".xlsx","Check");
+  }catch(err){
+    showToast(err.message,"AlertTriangle","red");
+  }finally{
+    delete EXCEL_DOWNLOADING[id]; render();
+  }
+}
+async function setStatus(id,to){
+  const before = (SIMS.find(s=>s.id===id)||{}).status;
+  SIMS=SIMS.map(s=>s.id===id?Object.assign({},s,{status:to}):s);   // mise à jour optimiste
+  render();
+  try{
+    const resp = await fetch("/api/simulations/"+encodeURIComponent(id)+"/status",{
+      method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({status:to})
+    });
+    const data = await resp.json();
+    if(!resp.ok || !data.success) throw new Error(data.message || "Échec de l'enregistrement du statut.");
+    showToast("Statut mis à jour : "+((STATUS_SIM[to]||{}).label||to),"CheckCircle2");
+  }catch(err){
+    SIMS=SIMS.map(s=>s.id===id?Object.assign({},s,{status:before}):s);   // retour arrière
+    showToast(err.message,"AlertTriangle","red");
+    render();
+  }
+}
+function modalHtml(){
+  const p=S.pendingStatus; if(!p) return "";
+  return '<div class="modal-overlay" data-act="confirm-cancel"><div class="modal" data-act="noop">'
+    +'<h3>'+icon("AlertTriangle",17,"txt-amber")+'Confirmer le changement</h3>'
+    +'<p>'+esc(p.msg)+'</p>'
+    +'<div class="actions"><button class="btn btn-ghost" data-act="confirm-cancel">Annuler</button>'
+    +'<button class="btn btn-amber" data-act="confirm-ok">Confirmer</button></div></div></div>';
+}
+
+function render(){
+  syncCreateForm();
+  document.getElementById("scount").innerHTML=icon("ListChecks",13)+" "+(SIMS_LOADING?"Chargement depuis Fabric…":SIMS.length+" scénarios");
+  const app=document.getElementById("app");
+  if(S.view==="list") app.innerHTML=viewList();
+  else if(S.view==="create") app.innerHTML=viewCreate();
+  else if(S.view==="compare") app.innerHTML=viewCompare();
+  document.getElementById("modal-root").innerHTML=modalHtml();
+  if(S._lastRenderedView !== S.view){
+    window.scrollTo(0,0);
+    S._lastRenderedView = S.view;
+  }
+}
+
+function retain(id){
+  const t=SIMS.find(s=>s.id===id);
+  SIMS=SIMS.map(s=>(s.cycle===t.cycle && sameDivSet(s.divisions,t.divisions))?Object.assign({},s,{retained:s.id===id}):s);
+}
+function duplicate(id){
+  const s=SIMS.find(x=>x.id===id);
+  const copy=Object.assign({},s,{id:"s"+Date.now(),name:s.name+" (copie)",retained:false,divisions:(s.divisions||[]).slice()});
+  const idx=SIMS.findIndex(x=>x.id===id); SIMS.splice(idx+1,0,copy);
+}
+function toggleSelect(id){
+  const i=S.selected.indexOf(id);
+  if(i>-1){S.selected.splice(i,1);return;}
+  const divs=SIMS.find(s=>s.id===id).divisions||[];
+  const selDivs=S.selected.length?(SIMS.find(s=>s.id===S.selected[0]).divisions||[]):divs;
+  const share = divs.some(d=>selDivs.includes(d));
+  if(!share||S.selected.length>=4) return;
+  S.selected.push(id);
+}
+
+
+async function launch(){
+  syncCreateForm();
+
+  if(!S.cDivisions.length){
+    showToast("Sélectionnez au moins une division","AlertTriangle","red");
+    return;
+  }
+
+  const arrets = (S.cArrets || [])
+    .filter(a => a.deb && a.fin)
+    .map(a => [a.deb, a.fin]);
+
+  const parameters = {
+    CAPACITE_MODE: {
+      finie: "Finie",
+      infinie: "Infinie",
+      matiere: "Matiere"
+    }[S.cCap],
+
+    MODE_PLANIF: S.cCap === "matiere"
+      ? "Plutot"
+      : (S.cPos === "auplustot" ? "Plutot" : "Plutard"),
+
+    SIM_DESC: S.cName || S.cDesc || "Simulation depuis interface",
+    SIM_USER: S.cUser || "ADMIN",
+    SIM_DIVISIONS: S.cDivisions.length === DIVISION_CODES.length
+      ? "ALL"
+      : S.cDivisions.join(","),
+    SIM_LAUNCH_DATE: S.cLaunchDate || "",
+    SIM_ARRETS_JSON: JSON.stringify(arrets),
+
+    VERIF_STOCK: S.cVerifStock || "AUTO",
+    VERIF_ECART_OPS: S.cVerifEcart || "AUTO",
+    VERIF_FENETRE: "AUTO",
+
+    HORIZON_MP_CRITIQUE_JOURS: Number(S.cHorMat || 30),
+    HORIZON_H_DAYS: Number(S.cHorizon || 10) * 7,
+    ADVANCE_RETREAT_DAYS: Number(S.cAdvRet || 21),
+    MAX_GAP_BETWEEN_OPS_HOURS: Number(S.cMaxGap || 336),
+
+    HORIZON_DEB: S.cHorDeb || "",
+    HORIZON_FIN: S.cHorFin || "",
+
+    LOG_LEVEL: "detailed",
+    LOG_FILTER: "all"
+  };
+
+  const scenarioConfig = {
+    name: S.cName,
+    description: S.cDesc,
+    divisions: S.cDivisions.slice(),
+    capacityMode: S.cCap,
+    positioning: S.cPos,
+    launchDate: S.cLaunchDate
+  };
+
+  S.running = true;
+  render();
+
+  try {
+    const response = await fetch("/api/run-simulation", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(parameters)
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      throw new Error(result.message || "Erreur lors du lancement");
+    }
+
+    showToast("Simulation envoyée à Fabric !", "Play");
+
+    const jobId = result.job_id;
+    const TERMINAL = ["Completed", "Failed", "Cancelled", "Deduped"];
+    const MAX_WAIT_MS = 45 * 60 * 1000;
+    const startedAt = Date.now();
+    const fmt = ms => { const t = Math.floor(ms / 1000); return Math.floor(t / 60) + ":" + String(t % 60).padStart(2, "0"); };
+    const asText = m => (m && typeof m === "object") ? JSON.stringify(m) : m;
+
+    let status = "NotStarted";
+    let statusResult = {};
+    let errors = 0;
+    let timedOut = false;
+
+    S.runMsg = "Envoi à Fabric, en attente du démarrage…";
+    render();
+
+    while (!TERMINAL.includes(status)) {
+      await new Promise(resolve => setTimeout(resolve, 10000));
+      const elapsed = Date.now() - startedAt;
+
+      if (elapsed > MAX_WAIT_MS) { timedOut = true; break; }
+
+      try {
+        const statusResponse = await fetch(`/api/job-status/${jobId}`);
+        statusResult = await statusResponse.json();
+        if (!statusResponse.ok || !statusResult.success) {
+          throw new Error(asText(statusResult.message) || "Impossible de vérifier le statut.");
+        }
+        errors = 0;
+      } catch (e) {
+        // tolère 2 erreurs passagères (réseau, limite de requêtes) avant d'abandonner
+        if (++errors >= 3) throw e;
+        S.runMsg = "Connexion à Fabric instable, nouvelle tentative… (" + fmt(elapsed) + ")";
+        render();
+        continue;
+      }
+
+      status = statusResult.status;
+
+      if (status === "NotStarted") {
+        S.runMsg = elapsed < 120000
+          ? "En attente de Fabric… (" + fmt(elapsed) + ")"
+          : "Toujours en file d'attente chez Fabric (" + fmt(elapsed) + ") : la session Spark ou la capacité est peut-être saturée (limite de sessions atteinte). Vérifie le Monitor hub dans Fabric.";
+      } else if (!TERMINAL.includes(status)) {
+        S.runMsg = "Calcul en cours dans Fabric… (" + fmt(elapsed) + ")";
+      }
+      render();
+    }
+
+    if (timedOut) {
+      showToast("Le suivi s'arrête après 45 min. Le calcul peut continuer dans Fabric : recharge la liste plus tard.", "AlertTriangle", "red");
+      await loadSims();
+    } else if (status === "Completed") {
+      await loadSims();
+      showToast("Simulation terminée et scénario ajouté !", "Check");
+    } else if (status === "Failed") {
+      const reason = asText((statusResult.result && statusResult.result.failureReason && statusResult.result.failureReason.message) || "");
+      throw new Error("La simulation a échoué dans Fabric." + (reason ? " " + reason : ""));
+    } else if (status === "Cancelled") {
+      throw new Error("La simulation a été annulée dans Fabric.");
+    } else if (status === "Deduped") {
+      throw new Error("Fabric a ignoré ce lancement : une exécution identique est déjà en cours.");
+    }
+
+    S.view = "list";
+
+  } catch (error) {
+    showToast(error.message, "AlertTriangle", "red");
+  } finally {
+    S.running = false;
+    S.runMsg = null;
+    render();
+  }
+}
+
+
+
+document.addEventListener("click",function(e){
+  const el=e.target.closest("[data-act]"); if(!el) return;
+  const act=el.getAttribute("data-act"), id=el.getAttribute("data-id");
+  switch(act){
+    case "set-filter": S.filter=el.getAttribute("data-v"); render(); break;
+    case "open-compare": S.view="compare"; render(); break;
+    case "new-sim": S.view="create"; S.running=false; render(); break;
+    case "toggle-cycle": {const c=el.getAttribute("data-cycle"); S.openCycles[c]=(S.openCycles[c]===false)?true:false; render(); break;}
+    case "menu-toggle": S.menu=(S.menu===id?null:id); S.statusMenu=null; render(); break;
+    case "menu-close": S.menu=null; render(); break;
+    case "status-toggle": S.statusMenu=(S.statusMenu===id?null:id); S.menu=null; render(); break;
+    case "status-close": S.statusMenu=null; render(); break;
+    case "status-set": {
+      const to=el.getAttribute("data-to");
+      const cur=SIMS.find(s=>s.id===id);
+      const t=(STATUS_TRANSITIONS[cur&&cur.status]||[]).find(x=>x.to===to);
+      S.statusMenu=null;
+      if(t&&t.confirm){ S.pendingStatus={id:id,to:to,msg:t.confirm}; }
+      else { setStatus(id,to); }
+      render(); break;
+    }
+    case "confirm-ok": { if(S.pendingStatus){ setStatus(S.pendingStatus.id,S.pendingStatus.to); S.pendingStatus=null; } render(); break; }
+    case "confirm-cancel": S.pendingStatus=null; render(); break;
+    case "noop": break;
+    case "download-excel": downloadExcel(id); break;
+    case "retain": retain(id); S.menu=null; render(); break;
+    case "duplicate": duplicate(id); S.menu=null; render(); break;
+    case "delete": SIMS=SIMS.filter(s=>s.id!==id); S.selected=S.selected.filter(x=>x!==id); S.menu=null; render(); break;
+    case "back": S.view="list"; render(); break;
+    case "c-section": {const k=el.getAttribute("data-sec"); S.cSections[k]=(S.cSections[k]===false)?true:false; render(); break;}
+    case "c-pos": S.cPos=el.getAttribute("data-v"); render(); break;
+    case "c-cap": {
+      syncCreateForm();
+      S.cCap=el.getAttribute("data-v");
+      render(); break;
+    }
+    case "c-div-toggle": {
+      const code=el.getAttribute("data-code");
+      const i=S.cDivisions.indexOf(code);
+      if(i>-1) S.cDivisions.splice(i,1); else S.cDivisions.push(code);
+      render(); break;
+    }
+    case "c-div-all": S.cDivisions=DIVISION_CODES.slice(); render(); break;
+    case "c-div-none": S.cDivisions=[]; render(); break;
+    case "arret-add": syncCreateForm(); S.cArrets=(S.cArrets||[]).concat([{deb:"",fin:""}]); render(); break;
+    case "arret-remove": {
+      syncCreateForm();
+      const idx=+el.getAttribute("data-idx");
+      if(S.cArrets && S.cArrets.length>idx) S.cArrets.splice(idx,1);
+      if(!S.cArrets||!S.cArrets.length) S.cArrets=[{deb:"",fin:""}];
+      render(); break;
+    }
+    case "launch": launch(); break;
+  }
+});
+document.addEventListener("change",function(e){
+  const el=e.target.closest("[data-act]"); if(!el) return;
+  const act=el.getAttribute("data-act");
+  if(act==="cycle-division"){ S.cycleDiv[el.getAttribute("data-cycle")]=el.value; render(); }
+  else if(act==="toggle-select"){ toggleSelect(el.getAttribute("data-id")); render(); }
+});
+
+render();
+loadSims();
+</script>
+</body>
+</html>
